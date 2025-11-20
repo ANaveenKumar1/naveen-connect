@@ -1,13 +1,502 @@
-
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Naveen Connect - Prototype</title>
+  <title>Naveen Connect – Workers & Contractors</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Simple styles inside the file so you don't need extra CSS files -->
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #f4f4f5;
+      color: #111827;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 480px; /* looks like a mobile app */
+      background: #ffffff;
+      min-height: 100vh;
+      box-shadow: 0 0 20px rgba(15, 23, 42, 0.15);
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header .brand {
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    header .location-chip {
+      background: rgba(15, 23, 42, 0.25);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    header .location-chip span.icon {
+      font-size: 14px;
+    }
+
+    main {
+      padding: 16px 16px 90px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .section-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 16px;
+    }
+
+    .tab-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+    }
+
+    .tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      white-space: nowrap;
+      cursor: pointer;
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    .tab.active {
+      background: #111827;
+      color: white;
+      border-color: #111827;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .role-card {
+      border-radius: 14px;
+      padding: 12px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-height: 90px;
+    }
+
+    .role-card .emoji {
+      font-size: 22px;
+    }
+
+    .role-card .title {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .role-card .desc {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .role-card.primary {
+      background: #eef2ff;
+      border-color: #4f46e5;
+    }
+
+    .role-card.primary .title {
+      color: #1d4ed8;
+    }
+
+    .list-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      margin-top: 8px;
+    }
+
+    .list-header h3 {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .list-header button {
+      border: none;
+      background: transparent;
+      color: #2563eb;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .worker-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .worker-card {
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+    }
+
+    .worker-main {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .worker-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .worker-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .worker-role {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      color: #6b7280;
+      background: #f9fafb;
+    }
+
+    .badge-rating {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: transparent;
+    }
+
+    .worker-meta {
+      text-align: right;
+      font-size: 11px;
+    }
+
+    .worker-meta .price {
+      font-weight: 600;
+      color: #16a34a;
+    }
+
+    .worker-meta .distance {
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+    }
+
+    .bottom-btn {
+      text-align: center;
+      font-size: 11px;
+      color: #6b7280;
+      cursor: pointer;
+    }
+
+    .bottom-btn .icon {
+      font-size: 18px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .bottom-btn.active {
+      color: #2563eb;
+      font-weight: 600;
+    }
+
+    .auth-bar {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      margin-bottom: 16px;
+    }
+
+    .auth-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 999px;
+      border: none;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .auth-btn.primary {
+      background: #111827;
+      color: #ffffff;
+    }
+
+    .auth-btn.outline {
+      background: #f9fafb;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+    }
+
+    .auth-btn span.icon {
+      font-size: 16px;
+    }
+
+    .small-note {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 500px) {
+      body {
+        background: #111827;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
+  <div class="app-shell">
+    <!-- TOP BAR -->
+    <header>
+      <div class="brand">Naveen Connect</div>
+      <div class="location-chip">
+        <span class="icon">📍</span>
+        <span>Auto location: Your city</span>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main>
+      <!-- LOGIN / SIGNUP AREA -->
+      <div>
+        <div class="section-title">Welcome 👋</div>
+        <div class="section-subtitle">
+          Login or create account. Workers who can’t read can use symbols.
+        </div>
+
+        <div class="auth-bar">
+          <button class="auth-btn primary">
+            <span class="icon">🔑</span>
+            <span>Login</span>
+          </button>
+          <button class="auth-btn outline">
+            <span class="icon">➕</span>
+            <span>Signup</span>
+          </button>
+        </div>
+
+        <div class="small-note">
+          Signup options: User, Worker, Real Estate, Contractor.  
+          (This is a demo screen – in real app each will open its own page.)
+        </div>
+      </div>
+
+      <!-- ROLE SELECT (SIGNUP TYPE) -->
+      <div style="margin-top: 22px;">
+        <div class="section-title">Signup as</div>
+        <div class="section-subtitle">Choose who you are. Icons help workers understand easily.</div>
+
+        <div class="card-grid">
+          <div class="role-card primary">
+            <div class="emoji">👤</div>
+            <div class="title">User</div>
+            <div class="desc">Find workers & contractors near you.</div>
+          </div>
+
+          <div class="role-card">
+            <div class="emoji">🧱</div>
+            <div class="title">Worker</div>
+            <div class="desc">Construction, painter, plumber, electrician, etc.</div>
+          </div>
+
+          <div class="role-card">
+            <div class="emoji">🏢</div>
+            <div class="title">Real Estate</div>
+            <div class="desc">See contractors & add up to 1000 workers.</div>
+          </div>
+
+          <div class="role-card">
+            <div class="emoji">👷‍♂️</div>
+            <div class="title">Contractor</div>
+            <div class="desc">View real-estate owners & manage project workers.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER TABS -->
+      <div class="tab-row">
+        <div class="tab active">All</div>
+        <div class="tab">Construction</div>
+        <div class="tab">Electrician</div>
+        <div class="tab">Plumber</div>
+        <div class="tab">Painter</div>
+        <div class="tab">Salon</div>
+        <div class="tab">Interior</div>
+      </div>
+
+      <!-- WORKER LIST -->
+      <div class="list-header">
+        <h3>Workers near you</h3>
+        <button>Change location ➜</button>
+      </div>
+      <p class="section-subtitle">Real-time list based on your GPS location (demo data shown).</p>
+
+      <div class="worker-list">
+        <div class="worker-card">
+          <div class="worker-main">
+            <div class="avatar">🧱</div>
+            <div class="worker-info">
+              <div class="worker-name">Raju</div>
+              <div class="worker-role">Construction Worker</div>
+              <div class="pill-row">
+                <span class="pill badge-rating">⭐ 4.8</span>
+                <span class="pill">5+ yrs exp</span>
+                <span class="pill">Speaks Telugu</span>
+              </div>
+            </div>
+          </div>
+          <div class="worker-meta">
+            <div class="price">₹800 / day</div>
+            <div class="distance">1.2 km away</div>
+          </div>
+        </div>
+
+        <div class="worker-card">
+          <div class="worker-main">
+            <div class="avatar">🔌</div>
+            <div class="worker-info">
+              <div class="worker-name">Srinivas</div>
+              <div class="worker-role">Electrician</div>
+              <div class="pill-row">
+                <span class="pill badge-rating">⭐ 4.6</span>
+                <span class="pill">Wiring & AC</span>
+                <span class="pill">Verified ID</span>
+              </div>
+            </div>
+          </div>
+          <div class="worker-meta">
+            <div class="price">₹250 / visit</div>
+            <div class="distance">0.8 km away</div>
+          </div>
+        </div>
+
+        <div class="worker-card">
+          <div class="worker-main">
+            <div class="avatar">🪠</div>
+            <div class="worker-info">
+              <div class="worker-name">Mahesh</div>
+              <div class="worker-role">Plumber</div>
+              <div class="pill-row">
+                <span class="pill badge-rating">⭐ 4.9</span>
+                <span class="pill">Emergency 24x7</span>
+              </div>
+            </div>
+          </div>
+          <div class="worker-meta">
+            <div class="price">₹300 / visit</div>
+            <div class="distance">2.0 km away</div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- BOTTOM NAV BAR -->
+    <nav class="bottom-nav">
+      <div class="bottom-btn active">
+        <span class="icon">🏠</span>
+        <span>Home</span>
+      </div>
+      <div class="bottom-btn">
+        <span class="icon">📋</span>
+        <span>My Jobs</span>
+      </div>
+      <div class="bottom-btn">
+        <span class="icon">⭐</span>
+        <span>Saved</span>
+      </div>
+      <div class="bottom-btn">
+        <span class="icon">👤</span>
+        <span>Profile</span>
+      </div>
+    </nav>
+  </div>
 </body>
 </html>
